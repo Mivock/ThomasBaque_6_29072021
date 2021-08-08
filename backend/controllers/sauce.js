@@ -70,6 +70,7 @@ exports.setLikes = (req, res, next) => {
           )
             .then(() => res.status(201).json({ message: "Sauce dislikée" }))
             .catch((error) => res.status(400).json({ error }));
+
           break;
         case 0:
           if (sauce.usersLiked.find((user) => user === req.body.userId)) {

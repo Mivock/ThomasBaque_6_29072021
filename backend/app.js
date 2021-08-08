@@ -1,18 +1,24 @@
+require("dotenv").config({ path: "../.env" });
 const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
+const helmet = require("helmet");
 
 const app = express();
 const mongoose = require("mongoose");
-mongoose.set("useCreateIndex", true); //pour supprimer messag deprecation mongo dans la console
+mongoose.set("useCreateIndex", true); //pour supprimer message deprecation mongo dans la console
+
+const url = process.env.DB_URL;
 
 mongoose
-  .connect(
-    "mongodb+srv://OC-User:OC-Password@cluster0.4fi8p.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
-    { useNewUrlParser: true, useUnifiedTopology: true }
-  )
+  .connect(url, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => console.log("Connexion à MongoDB réussie !"))
   .catch(() => console.log("Connexion à MongoDB échouée !"));
+
+app.use(helmet());
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
