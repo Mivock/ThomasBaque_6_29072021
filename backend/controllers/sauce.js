@@ -29,6 +29,7 @@ exports.getOneSauce = (req, res, next) => {
 };
 
 exports.modifySauce = (req, res, next) => {
+  //find one sauce / if sauce.users id == decodeduser id token
   const sauceObject = req.file
     ? {
         ...JSON.parse(req.body.sauce),
@@ -58,30 +59,42 @@ exports.deleteSauce = (req, res, next) => {
 exports.setLikes = (req, res, next) => {
   if (req.body.like === -1) {
     //dans le cas d'un dislike
-    Sauce.updateOne(
-      { _id: req.params.id },
-      {
-        $push: { usersDisliked: req.body.userId },
-        $inc: { dislikes: 1 },
+    Sauce.findOne({ _id: req.params.id }).then((sauce) => {
+      if (sauce.usersDisliked.indexOf(req.body.userId) === -1) {
+        Sauce.updateOne(
+          { _id: req.params.id },
+          {
+            $push: { usersDisliked: req.body.userId },
+            $inc: { dislikes: 1 },
 
-        _id: req.params.id,
+            _id: req.params.id,
+          }
+        )
+          .then(() => res.status(201).json({ message: "Sauce dislikée" }))
+          .catch((error) => res.status(400).json({ error }));
+      } else {
+        res.status(400).json({ error: "Sauce déjà dislikée" });
       }
-    )
-      .then(() => res.status(201).json({ message: "Sauce dislikée" }))
-      .catch((error) => res.status(400).json({ error }));
+    });
   } else if (req.body.like === 1) {
     //dans le cas d'un like
-    Sauce.updateOne(
-      { _id: req.params.id },
-      {
-        $push: { usersLiked: req.body.userId },
-        $inc: { likes: 1 },
+    Sauce.findOne({ _id: req.params.id }).then((sauce) => {
+      if (sauce.usersLiked.indexOf(req.body.userId) === -1) {
+        Sauce.updateOne(
+          { _id: req.params.id },
+          {
+            $push: { usersLiked: req.body.userId },
+            $inc: { likes: 1 },
 
-        _id: req.params.id,
+            _id: req.params.id,
+          }
+        )
+          .then(() => res.status(201).json({ message: "Sauce likée" }))
+          .catch((error) => res.status(400).json({ error }));
+      } else {
+        res.status(400).json({ error: "Sauce déjà likée" });
       }
-    )
-      .then(() => res.status(201).json({ message: "Sauce likée" }))
-      .catch((error) => res.status(400).json({ error }));
+    });
   } else {
     Sauce.findOne({ _id: req.params.id })
       .then((sauce) => {
