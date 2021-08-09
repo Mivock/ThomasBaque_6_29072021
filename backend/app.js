@@ -3,6 +3,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
 const helmet = require("helmet");
+const cookieSession = require("cookie-session");
 
 const app = express();
 const mongoose = require("mongoose");
@@ -32,6 +33,18 @@ app.use((req, res, next) => {
   );
   next();
 });
+
+app.use(
+  cookieSession({
+    name: "session",
+    secret: process.env.COOKIE_SECRET,
+    cookie: {
+      secure: true,
+      httpOnly: true,
+      domain: "http://localhost:3000",
+    },
+  })
+);
 
 const Sauce = require("./models/Sauce");
 const User = require("./models/User");
