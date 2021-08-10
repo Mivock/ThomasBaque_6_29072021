@@ -1,5 +1,6 @@
 const multer = require("multer");
 
+//fichier config de multer
 const MIME_TYPES = {
   "image/jpg": "jpg",
   "image/jpeg": "jpg",
@@ -11,8 +12,8 @@ const storage = multer.diskStorage({
     callback(null, "images");
   },
   filename: (req, file, callback) => {
-    const name = file.originalname.split(" ").join("_");
-    const extension = MIME_TYPES[file.mimetype];
+    const name = file.originalname.split(" ").join("_"); //remplacement des espaces dans le nom du fichier
+    const extension = MIME_TYPES[file.mimetype]; //extension du fichier
     callback(null, name + Date.now() + "." + extension);
   },
 });

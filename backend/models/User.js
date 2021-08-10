@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 require("mongoose-type-email");
 const uniqueValidator = require("mongoose-unique-validator");
 
+//modèle user selon document en ressources, avec l'aide de mongoose-type-email pour verifier le format de l'email
 const userSchema = mongoose.Schema({
   email: {
     email: mongoose.SchemaTypes.Email,
